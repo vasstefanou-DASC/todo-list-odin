@@ -105,6 +105,26 @@ const project = class {
     }
 };
 
-const defaultProject = new project("Uncategorized","Tasks are put here if no projects exists (Cannot be deleted)");
+const projects = {
 
-export {task,project,defaultProject};
+    defaultProject: new project("Uncategorized","Tasks are put here if no projects exists (Cannot be deleted)"),
+    projectsArr: [],
+    findProject(project) {
+        return this.projectsArr.findIndex(proj => proj.title === project.title);
+    },
+    addProject(project) {
+        if(this.findProject(project) === -1) {
+            this.projectsArr.push(project);
+        }
+    },
+    deleteProject(project) {
+        const index = this.findProject(project)
+        if (index !== -1 && project.title !== "Uncategorized") {
+            this.projectsArr.splice(index,1);
+        }
+    }
+};
+
+projects.projectsArr.push(projects.defaultProject);
+
+export {task,project,projects};

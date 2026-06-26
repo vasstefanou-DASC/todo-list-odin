@@ -1,4 +1,4 @@
-import {task,project,defaultProject} from "./task-project.js";
+import {task,project,projects} from "./task-project.js";
 
 const domCreation = {
     testing() {
@@ -7,7 +7,7 @@ const domCreation = {
 
         const task1 = new task("Dummy Task","June 2026");
 
-        domTask.textContent = `Title: ${task1.title} \n
+        domTask.textContent = `Title: ${task1.title}
         DueDate: ${task1.dueDate}
         Priority: ${task1.priority}
         Status: ${task1.checkList}`;
