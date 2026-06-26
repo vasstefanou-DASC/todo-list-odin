@@ -66,7 +66,7 @@ const project = class {
     #title;
     #description;
     #tasks = [];
-
+    
     constructor(title,description) {
         this.#title = title;
         this.#description = description;

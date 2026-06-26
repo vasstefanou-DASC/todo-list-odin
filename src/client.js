@@ -33,3 +33,5 @@ const client = class {
     }
 
 }
+
+export { client };
