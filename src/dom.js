@@ -54,6 +54,10 @@ const domCreation = {
         Status: ${task1.checkList}`;
 
         main.appendChild(domTask);
+    },
+    footer() {
+        const footer = document.querySelector("footer");
+        footer.textContent = "VS Todo Tasklist App Odin Project 2026";
     }
 };
 

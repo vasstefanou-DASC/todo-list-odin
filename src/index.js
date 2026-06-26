@@ -7,3 +7,4 @@ console.log(new Date(Date.now()).toDateString());
 domCreation.createHeader();
 domCreation.createAside();
 domCreation.testing();
+domCreation.footer();
