@@ -1,7 +1,12 @@
 import {task,project,projects} from "./task-project.js";
 import {client} from "./client.js";
+import forms from "./forms.js";
 
 const domCreation = {
+    createDialogs() {
+        forms.createTaskFormDialog();
+        forms.createProjectFormDialog();
+    },
     createHeader() {
         const header = document.querySelector("header");
         header.textContent = "Manage your everyday tasks";
@@ -14,8 +19,14 @@ const domCreation = {
         aside.appendChild(profileVis);
         const addTaskButton = document.createElement("button");
         addTaskButton.id = "add-task";
-        addTaskButton.textContent = "Add task";
+        addTaskButton.textContent = "Add Task";
+        addTaskButton.addEventListener("click",forms.openTaskFormDialog);
         aside.appendChild(addTaskButton);
+        const addProjectButton = document.createElement("button");
+        addProjectButton.id = "add-project";
+        addProjectButton.textContent = "Add Project";
+        addProjectButton.addEventListener("click",forms.openProjectFormDialog);
+        aside.appendChild(addProjectButton);
         const projectsListContainer = document.createElement("div");
         const listTitle = document.createElement("h3");
         listTitle.textContent = "Todo Task Lists";
