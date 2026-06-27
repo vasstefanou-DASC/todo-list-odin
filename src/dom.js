@@ -4,8 +4,24 @@ import forms from "./forms.js";
 
 const domCreation = {
     createDialogs() {
-        forms.createTaskFormDialog();
-        forms.createProjectFormDialog();
+        const {addTaskDialog: taskDialog,form: taskForm} = forms.createTaskFormDialog();
+        const {addProjectDialog: projectDialog,form: projectForm} = forms.createProjectFormDialog();
+        const addTaskDialogButton = document.querySelector("#task-form-add");
+        const taskTitleInput = document.querySelector("#task-form-title");
+        const taskDescriptionInput = document.querySelector("#task-form-description");
+        const taskDateInput = document.querySelector("#task-form-date");
+        // const taskPriorityInput = document.querySelector(`${task.priorities[i]}`);
+        const taskNotesInput = document.querySelector("#task-form-notes");
+        const taskProjectInput = document.querySelector("#select-project");
+        const addProjectDialogButton = document.querySelector("#project-form-add");
+        const projectTitleInput = document.querySelector("#project-form-title");
+        const projectDescriptionInput = document.querySelector("#project-form-description");
+        addProjectDialogButton.addEventListener("click",() => {
+            projects.addProject(new project(projectTitleInput.value,projectDescriptionInput.value));
+            this.renderProjects();
+            projectDialog.close();
+            projectForm.reset();
+        });
     },
     createHeader() {
         const header = document.querySelector("header");
@@ -32,15 +48,10 @@ const domCreation = {
         listTitle.textContent = "Todo Task Lists";
         projectsListContainer.appendChild(listTitle);
         const projectsList = document.createElement("ul");
-        for (const project of projects.projectsArr) {
-            const listItem = document.createElement("li");
-            const listItemButton = document.createElement("button");
-            listItemButton.textContent = `${project.title}`;
-            listItem.appendChild(listItemButton);
-            projectsList.appendChild(listItem);
-        }
+        projectsList.id = "projects-list";
         projectsListContainer.appendChild(projectsList);
         aside.appendChild(projectsListContainer);
+        this.renderProjects();
         const statsLogoutContainer = document.createElement("div");
         statsLogoutContainer.id = "stats-logout";
         const statsButton = document.createElement("button");
@@ -69,6 +80,17 @@ const domCreation = {
     footer() {
         const footer = document.querySelector("footer");
         footer.textContent = "VS Todo Tasklist App Odin Project 2026";
+    },
+    renderProjects() {
+        const projectsList = document.querySelector("#projects-list");
+        projectsList.textContent = "";
+        for (const project of projects.projectsArr) {
+            const listItem = document.createElement("li");
+            const listItemButton = document.createElement("button");
+            listItemButton.textContent = `${project.title}`;
+            listItem.appendChild(listItemButton);
+            projectsList.appendChild(listItem);
+        }
     }
 };
 

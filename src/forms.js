@@ -10,6 +10,7 @@ const forms = {
         titleInput.setAttribute("type","text");
         titleInput.id = "task-form-title";
         titleInput.name = "title";
+        titleInput.required = true;
         titleInput.placeholder = "Title...";
         form.appendChild(titleInput);
         const descriptionInput = document.createElement("input");
@@ -46,6 +47,7 @@ const forms = {
         const projectsDropdownDiv = document.createElement("div");
         const projectsDropdown = document.createElement("select");
         projectsDropdown.name = "project";
+        projectsDropdown.id = "select-project";
         for (let i=0;i<projects.projectsArr.length;i++) {
             const optionProject = document.createElement("option");
             if (i === 0) optionProject.selected = true;
@@ -57,15 +59,18 @@ const forms = {
         form.appendChild(projectsDropdownDiv);
         const cancelButton = document.createElement("button");
         cancelButton.id = "task-form-cancel";
+        cancelButton.type = "button";
         cancelButton.textContent = "Cancel";
         cancelButton.addEventListener("click", () => addTaskDialog.close());
         form.appendChild(cancelButton);
         const addButton = document.createElement("button");
         addButton.id = "task-form-add";
+        addButton.type = "button";
         addButton.textContent = "Add Task";
         form.appendChild(addButton);
         addTaskDialog.appendChild(form);
         document.body.appendChild(addTaskDialog);
+        return {addTaskDialog,form} ;
     },
     openTaskFormDialog() {
         document.querySelector("#add-task-dialog").showModal();
@@ -79,25 +84,30 @@ const forms = {
         titleInput.setAttribute("type","text");
         titleInput.id = "project-form-title";
         titleInput.name = "title";
+        titleInput.required = true;
         titleInput.placeholder = "Title...";
         form.appendChild(titleInput);
         const descriptionInput = document.createElement("input");
         descriptionInput.setAttribute("type","text");
         descriptionInput.id = "project-form-description";
         descriptionInput.name = "description";
+        descriptionInput.required = true;
         descriptionInput.placeholder = "Description...";
         form.appendChild(descriptionInput);
         const cancelButton = document.createElement("button");
         cancelButton.id = "project-form-cancel";
+        cancelButton.type = "button";
         cancelButton.textContent = "Cancel";
         cancelButton.addEventListener("click", () => addProjectDialog.close());
         form.appendChild(cancelButton);
         const addButton = document.createElement("button");
         addButton.id = "project-form-add";
+        addButton.type = "button";
         addButton.textContent = "Add Project";
         form.appendChild(addButton);
         addProjectDialog.appendChild(form);
         document.body.appendChild(addProjectDialog);
+        return{addProjectDialog,form};
     },
     openProjectFormDialog() {
         document.querySelector("#add-project-dialog").showModal();
