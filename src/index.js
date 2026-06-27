@@ -7,5 +7,5 @@ console.log(new Date(Date.now()).toDateString());
 domCreation.createDialogs();
 domCreation.createHeader();
 domCreation.createAside();
-domCreation.testing();
+domCreation.createMain();
 domCreation.footer();

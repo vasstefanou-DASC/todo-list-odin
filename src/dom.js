@@ -3,6 +3,9 @@ import {client} from "./client.js";
 import forms from "./forms.js";
 
 const domCreation = {
+
+    activeTab: null, 
+    
     createDialogs() {
         const {addTaskDialog: taskDialog,form: taskForm} = forms.createTaskFormDialog();
         const {addProjectDialog: projectDialog,form: projectForm} = forms.createProjectFormDialog();
@@ -10,12 +13,23 @@ const domCreation = {
         const taskTitleInput = document.querySelector("#task-form-title");
         const taskDescriptionInput = document.querySelector("#task-form-description");
         const taskDateInput = document.querySelector("#task-form-date");
-        // const taskPriorityInput = document.querySelector(`${task.priorities[i]}`);
         const taskNotesInput = document.querySelector("#task-form-notes");
         const taskProjectInput = document.querySelector("#select-project");
         const addProjectDialogButton = document.querySelector("#project-form-add");
         const projectTitleInput = document.querySelector("#project-form-title");
         const projectDescriptionInput = document.querySelector("#project-form-description");
+        addTaskDialogButton.addEventListener("click", () => {
+            const taskToAdd = new task(taskTitleInput.value,taskDateInput.value,taskProjectInput.value);
+            const taskPriorityInput = document.querySelector("input[name='priority']:checked");
+            taskToAdd.description = taskDescriptionInput.value;
+            taskToAdd.priority = taskPriorityInput.value;
+            taskToAdd.notes = taskNotesInput.value;
+            const projectOfTask = projects.projectsArr.find(proj => proj.title === taskToAdd.project);
+            projectOfTask.addTask(taskToAdd);
+            this.renderTasks();
+            taskDialog.close();
+            taskForm.reset();
+        });
         addProjectDialogButton.addEventListener("click",() => {
             projects.addProject(new project(projectTitleInput.value,projectDescriptionInput.value));
             this.renderProjects();
@@ -64,18 +78,9 @@ const domCreation = {
         statsLogoutContainer.appendChild(logoutButton);
         aside.appendChild(statsLogoutContainer);
     },
-    testing() {
-        const main = document.querySelector("main");
-        const domTask = document.createElement("div");
-
-        const task1 = new task("Dummy Task","June 2026");
-
-        domTask.textContent = `Title: ${task1.title}
-        DueDate: ${task1.dueDate}
-        Priority: ${task1.priority}
-        Status: ${task1.checkList}`;
-
-        main.appendChild(domTask);
+    createMain() {
+        this.activeTab = projects.projectsArr[0];
+        this.renderTasks();
     },
     footer() {
         const footer = document.querySelector("footer");
@@ -88,8 +93,24 @@ const domCreation = {
             const listItem = document.createElement("li");
             const listItemButton = document.createElement("button");
             listItemButton.textContent = `${project.title}`;
+            listItemButton.addEventListener("click", () => {
+                this.activeTab = project;
+                this.renderTasks();
+            });
             listItem.appendChild(listItemButton);
             projectsList.appendChild(listItem);
+        }
+    },
+    renderTasks() {
+        const main = document.querySelector("main");
+        main.textContent = "";
+        const projectHeader = document.createElement("h2");
+        projectHeader.textContent = this.activeTab.title;
+        main.appendChild(projectHeader);
+        for(const task of this.activeTab.tasks) {
+            const taskDiv = document.createElement("div");
+            taskDiv.textContent = `${task.title} ---> ${task.dueDate} --- ${task.priority}`;
+            main.appendChild(taskDiv);
         }
     }
 };

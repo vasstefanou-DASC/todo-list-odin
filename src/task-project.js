@@ -6,13 +6,14 @@ const task = class {
     static #priorities = ["No priority given","Low","Medium","High"];
     static #checkLists = ["Not Completed","Completed"];
     #notes = "";
-    #priority;
+    #priority = "";
     #checkList;
+    #project;
     
-    constructor(title,dueDate) {
+    constructor(title,dueDate,project) {
         this.#title = title;
         this.#dueDate = dueDate;
-        this.#priority = task.#priorities[0];
+        this.#project = project;
         this.#checkList = task.#checkLists[0];    
     }
 
@@ -21,6 +22,9 @@ const task = class {
     }
     get dueDate() {
         return this.#dueDate;
+    }
+    get project() {
+        return this.#project;
     }
     get description() {
         return this.#description;
@@ -46,6 +50,9 @@ const task = class {
     }
     set dueDate(date) {
         this.#dueDate = date;
+    }
+    set project(project) {
+        this.#project = project;
     }
     set description(description) {
         this.#description = description;
