@@ -1,11 +1,8 @@
-import "./styles.css"
-import domCreation from "./dom.js";
+import './styles.css';
+import { load } from './json.js';
+import { domUI } from './dom.js';
 
-console.log("Hello");
-console.log(new Date(Date.now()).toDateString());
+load();
+domUI.renderAside();
 
-domCreation.createDialogs();
-domCreation.createHeader();
-domCreation.createAside();
-domCreation.createMain();
-domCreation.footer();
+

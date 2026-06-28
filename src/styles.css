@@ -1,37 +1,209 @@
-* {
-    margin: 0;
+@font-face {
+    font-family: 'Inter';
+    src: url('./InterFont/Inter-ExtraLight.woff2') format('woff2'),
+        url('./InterFont/Inter-ExtraLight.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('./InterFont/Inter-Bold.woff2') format('woff2'),
+        url('./InterFont/Inter-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --system-ui: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+*, *::before, *::after{
     box-sizing: border-box;
 }
-:root {
-    --main-color: #FFFAF3;
-    --color-n2: #fff2DB;
-    --color-n3: #FFE5BF;
-    --color-n4: #F62440;
+*:not(dialog){
+    margin: 0;
+}
+html {
+    font-size: 16px;
 }
 body {
+    line-height: 1.5;
+    font-family: "Inter",var(--system-ui);
+    font-weight: 200;
+    height:100vh;
     display:grid;
-    height: 100vh;
-    grid-template: 80px 1fr 60px / 250px 1fr;
+    grid-template: 80px 1fr 60px / 270px 1fr;
 }
-header {
-    background-color: var(--main-color);
+input, button, textarea, select {
+    font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+p {
+    text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Inter",var(--system-ui);
+    font-weight: bold;
+    text-wrap: balance;
+}
+header,footer {
+    grid-column:2/-1;
+    background-color: rgb(219, 64, 53,0.7);
+    color: white;
+    display:flex;
+    align-items:center;
+    justify-content: center;
 }
 aside {
-    display:flex;
+    grid-area: 1/1/-1/2;
+    background: linear-gradient(to bottom right, #ffffff, #fce4e4);
+    color: white;
+    padding: 16px;
+}
+aside > p:first-child {
+    font-size:1.2rem;
+    font-weight:bold;
+    margin-bottom: 16px;
+    color: black;
+}
+li > p {
+    font-size: 0.85rem;
+}
+aside ul {
+    list-style: none;
+    padding: 0;
+}
+aside ul li {
+    display: flex;
     flex-direction: column;
-    background-color: var(--color-n2);
-    grid-area: 1/1/4/2;
+    color:black;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+#aside-buttons {
+    display:flex;
+    flex-direction:column;
+}
+.project-name-button {
+    padding:0;
+    background:none;
+    color:black;
+    font-weight:bold;
+    font-size:1.05rem;
+}
+.project-name-button:hover {
+    background:none;
+}
+.project-buttons {
+    display: flex;
+    justify-content: space-between;
 }
 main {
-    background-color: var(--color-n3);
+    background: linear-gradient(to right,#fce4e4,#ffffff);
+    padding: 24px;
+    overflow-y: auto;
 }
-footer {
-    background-color: var(--color-n4);
+h3 {
+    text-decoration: underline #db4035 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: black;
+    margin: 16px 0 8px;
+}
+main h3 {
+    font-size: 0.95rem;
+}
+button {
+    background: rgb(219, 64, 53,0.5);
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+button:hover {
+    background: rgb(219, 64, 53,0.9);
 }
 
-
-#stats-logout {
+.task-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.task-properties{
     display:flex;
-    flex-direction: column;
-    justify-self: flex-end;
+    flex-direction:column;
+    row-gap: 5px;
 }
+.task-top-line,.task-buttons {
+    display:flex;
+    column-gap: 10px;
+}
+dialog {
+    background: linear-gradient(to bottom, #ffffff, #d9d9d9);
+    border:none;
+    border-radius: 12px;
+    padding: 24px 24px 60px 24px;
+    width: 420px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+dialog input, dialog select {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    display: block;
+}
+dialog select {
+    margin-top:12px;
+}
+input[type="radio"] {
+    display: none;
+}
+input[type="radio"] + label {
+    display: inline-block;
+    padding: 6px 14px;
+    margin-right:5px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #555;
+    background: #f5f5f5;
+}
+input[type="radio"]:checked + label {
+    background: #db4035;
+    color: white;
+    border-color: #db4035;
+}
+#cancel-task-form,
+#cancel-project-form {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+}
+
+#add-task-form,
+#add-project-form,
+#edit-task-form {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+}
+

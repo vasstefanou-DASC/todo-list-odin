@@ -23,8 +23,12 @@ export default {
             },
             {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
-                type: "asset/resourse",
+                type: "asset/resource",
             },
+            {
+                test: /\.(woff|woff2)$/,
+                type: "asset/resource",
+            }
         ],
     },
 };

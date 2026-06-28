@@ -1,118 +1,149 @@
-import {task,project,projects} from "./task-project.js";
-import {client} from "./client.js";
-import forms from "./forms.js";
+import { projectManagement } from './appLogic.js';
+import { renderDialog } from './dialog.js';
+import { save } from './json.js';
 
-const domCreation = {
+const domUI = (() => {
 
-    activeTab: null, 
+    const aside = document.querySelector("aside");
+    const main = document.querySelector("main");
+    const projectsListDiv = document.createElement("div");
+    const tasksDiv = document.createElement("div");
     
-    createDialogs() {
-        const {addTaskDialog: taskDialog,form: taskForm} = forms.createTaskFormDialog();
-        const {addProjectDialog: projectDialog,form: projectForm} = forms.createProjectFormDialog();
-        const addTaskDialogButton = document.querySelector("#task-form-add");
-        const taskTitleInput = document.querySelector("#task-form-title");
-        const taskDescriptionInput = document.querySelector("#task-form-description");
-        const taskDateInput = document.querySelector("#task-form-date");
-        const taskNotesInput = document.querySelector("#task-form-notes");
-        const taskProjectInput = document.querySelector("#select-project");
-        const addProjectDialogButton = document.querySelector("#project-form-add");
-        const projectTitleInput = document.querySelector("#project-form-title");
-        const projectDescriptionInput = document.querySelector("#project-form-description");
-        addTaskDialogButton.addEventListener("click", () => {
-            const taskToAdd = new task(taskTitleInput.value,taskDateInput.value,taskProjectInput.value);
-            const taskPriorityInput = document.querySelector("input[name='priority']:checked");
-            taskToAdd.description = taskDescriptionInput.value;
-            taskToAdd.priority = taskPriorityInput.value;
-            taskToAdd.notes = taskNotesInput.value;
-            const projectOfTask = projects.projectsArr.find(proj => proj.title === taskToAdd.project);
-            projectOfTask.addTask(taskToAdd);
-            this.renderTasks();
-            taskDialog.close();
-            taskForm.reset();
+    const renderAside = () => {
+        const paraUserName = document.createElement("p");
+        paraUserName.textContent = "Hello, enjoying my app?";
+        aside.appendChild(paraUserName);
+        const openDialogsButtonsDiv = document.createElement("div");
+        openDialogsButtonsDiv.id = "aside-buttons";
+        aside.appendChild(openDialogsButtonsDiv);
+        const openTaskDialogButton = document.createElement("button");
+        openTaskDialogButton.textContent = "Add Task";
+        openTaskDialogButton.addEventListener("click",renderDialog.taskForm);
+        openDialogsButtonsDiv.appendChild(openTaskDialogButton);
+        const openProjectDialogButton = document.createElement("button");
+        openProjectDialogButton.textContent = "Add Project";
+        openProjectDialogButton.addEventListener("click", () => {
+            renderDialog.projectForm();
         });
-        addProjectDialogButton.addEventListener("click",() => {
-            projects.addProject(new project(projectTitleInput.value,projectDescriptionInput.value));
-            this.renderProjects();
-            projectDialog.close();
-            projectForm.reset();
-        });
-    },
-    createHeader() {
-        const header = document.querySelector("header");
-        header.textContent = "Manage your everyday tasks";
-    },
-    createAside() {
-        const aside = document.querySelector("aside");
-        const profile = new client("Vasilis","Stefanou","email@email.com");
-        const profileVis = document.createElement("div");
-        profileVis.textContent = `${profile.fullName}`;
-        aside.appendChild(profileVis);
-        const addTaskButton = document.createElement("button");
-        addTaskButton.id = "add-task";
-        addTaskButton.textContent = "Add Task";
-        addTaskButton.addEventListener("click",forms.openTaskFormDialog);
-        aside.appendChild(addTaskButton);
-        const addProjectButton = document.createElement("button");
-        addProjectButton.id = "add-project";
-        addProjectButton.textContent = "Add Project";
-        addProjectButton.addEventListener("click",forms.openProjectFormDialog);
-        aside.appendChild(addProjectButton);
-        const projectsListContainer = document.createElement("div");
-        const listTitle = document.createElement("h3");
-        listTitle.textContent = "Todo Task Lists";
-        projectsListContainer.appendChild(listTitle);
+        openDialogsButtonsDiv.appendChild(openProjectDialogButton);
+        const projectsHeading = document.createElement("h3");
+        projectsHeading.textContent = "Projects";
+        aside.appendChild(projectsHeading);
+        aside.appendChild(projectsListDiv);
+        renderProjects();
+        
+    };
+    
+    const renderProjects = () => {
+        projectsListDiv.innerHTML = "";
+        const projects = projectManagement.getProjects();
         const projectsList = document.createElement("ul");
-        projectsList.id = "projects-list";
-        projectsListContainer.appendChild(projectsList);
-        aside.appendChild(projectsListContainer);
-        this.renderProjects();
-        const statsLogoutContainer = document.createElement("div");
-        statsLogoutContainer.id = "stats-logout";
-        const statsButton = document.createElement("button");
-        statsButton.id = "stats";
-        statsButton.textContent = "Stats";
-        statsLogoutContainer.appendChild(statsButton);
-        const logoutButton = document.createElement("button");
-        logoutButton.id = "logout";
-        logoutButton.textContent = "Log Out";
-        statsLogoutContainer.appendChild(logoutButton);
-        aside.appendChild(statsLogoutContainer);
-    },
-    createMain() {
-        this.activeTab = projects.projectsArr[0];
-        this.renderTasks();
-    },
-    footer() {
-        const footer = document.querySelector("footer");
-        footer.textContent = "VS Todo Tasklist App Odin Project 2026";
-    },
-    renderProjects() {
-        const projectsList = document.querySelector("#projects-list");
-        projectsList.textContent = "";
-        for (const project of projects.projectsArr) {
+        projectsListDiv.appendChild(projectsList);
+        for(const proj of projects) {
             const listItem = document.createElement("li");
-            const listItemButton = document.createElement("button");
-            listItemButton.textContent = `${project.title}`;
-            listItemButton.addEventListener("click", () => {
-                this.activeTab = project;
-                this.renderTasks();
-            });
-            listItem.appendChild(listItemButton);
             projectsList.appendChild(listItem);
+            const projButtons = document.createElement("div");
+            projButtons.className = "project-buttons";
+            listItem.appendChild(projButtons);
+            const projName = document.createElement("button");
+            projName.textContent = `${proj.title}`;
+            projName.className = "project-name-button";
+            projName.addEventListener("click", () => {
+                renderMain(proj);
+            });
+            projButtons.appendChild(projName);
+            const deleteProj = document.createElement("button");
+            deleteProj.textContent = "Delete";
+            deleteProj.addEventListener("click",() => {
+                projectManagement.deleteProject(proj);
+                renderProjects();
+                save();
+                main.innerHTML = "";
+                const afterDelMessage = document.createElement("h2");
+                afterDelMessage.textContent = "You just deleted a project , Select a project to view tasks.";
+                main.appendChild(afterDelMessage);
+            });
+            projButtons.appendChild(deleteProj);
+            const projDesc = document.createElement("p");
+            projDesc.textContent = `${proj.description}`;
+            listItem.appendChild(projDesc);
         }
-    },
-    renderTasks() {
-        const main = document.querySelector("main");
-        main.textContent = "";
-        const projectHeader = document.createElement("h2");
-        projectHeader.textContent = this.activeTab.title;
-        main.appendChild(projectHeader);
-        for(const task of this.activeTab.tasks) {
-            const taskDiv = document.createElement("div");
-            taskDiv.textContent = `${task.title} ---> ${task.dueDate} --- ${task.priority}`;
-            main.appendChild(taskDiv);
-        }
-    }
-};
+    };
+    const renderMain = (p) => {
+        main.innerHTML = "";
+        tasksDiv.innerHTML = "";
+        projectManagement.sortTasks(p);
+        const projHead1 = document.createElement("h2");
+        projHead1.textContent = `${p.title}`;
+        main.appendChild(projHead1);
+        const projHead2 = document.createElement("p");
+        projHead2.textContent = `${p.description}`;
+        main.appendChild(projHead2);
+        main.appendChild(tasksDiv);
+        const notComHead = document.createElement("h3");
+        notComHead.textContent = "Not Completed Tasks";
+        tasksDiv.appendChild(notComHead);
+        renderTasks(p.notCompletedTasks,"⬜");
+        const ComHead = document.createElement("h3");
+        ComHead.textContent = "Completed Tasks";
+        tasksDiv.appendChild(ComHead);
+        renderTasks(p.completedTasks,"✅");   
+    };
 
-export default domCreation;
+    const renderTasks = (pArr,mark) => {
+        for (const tsk of pArr) {
+            const taskDiv = document.createElement("div");
+            taskDiv.className = "task-card";
+            tasksDiv.appendChild(taskDiv);
+            const taskprops = document.createElement("div");
+            taskprops.className = "task-properties";
+            const taskprop1 = document.createElement("div");
+            taskprop1.className = "task-top-line";
+            const taskprop2 = document.createElement("div");
+            const taskButtons = document.createElement("div");
+            taskButtons.className = "task-buttons";
+            taskDiv.appendChild(taskprops);
+            taskprops.appendChild(taskprop1);
+            taskprops.appendChild(taskprop2);
+            taskDiv.appendChild(taskButtons);
+            const taskTitle = document.createElement("p");
+            taskTitle.textContent = `Title: ${tsk.title}`;
+            taskprop1.appendChild(taskTitle);
+            const taskDesc = document.createElement("p");
+            taskDesc.textContent = `Description: ${tsk.description}`;
+            taskprop2.appendChild(taskDesc);
+            const taskDue = document.createElement("p");
+            taskDue.textContent = `DueDate: ${tsk.dueDate}`;
+            taskprop1.appendChild(taskDue);
+            const taskPri = document.createElement("p");
+            taskPri.textContent = `Priority: ${tsk.priority}`;
+            taskprop1.appendChild(taskPri);
+            const viewEditButton = document.createElement("button");
+            viewEditButton.textContent = "View/Edit";
+            viewEditButton.addEventListener("click", () => {
+                renderDialog.viewEditTaskForm(tsk);
+            });
+            taskButtons.appendChild(viewEditButton);
+            const delButton = document.createElement("button");
+            delButton.textContent = "Delete";
+            delButton.addEventListener("click", () => {
+                projectManagement.getProjectByTitle(tsk.projectName).deleteTask(tsk);
+                renderMain(projectManagement.getProjectByTitle(tsk.projectName));
+                save();
+            });
+            taskButtons.appendChild(delButton);
+            const togCompleteButton = document.createElement("button");
+            togCompleteButton.textContent = mark;
+            togCompleteButton.addEventListener("click", () => {
+                projectManagement.getProjectByTitle(tsk.projectName).toggleCompleteTask(tsk);
+                renderMain(projectManagement.getProjectByTitle(tsk.projectName));
+                save();
+            });
+            taskButtons.appendChild(togCompleteButton);
+        } 
+    }
+
+    return {renderAside,renderProjects,renderMain,renderTasks} ;
+})();
+
+export { domUI };
